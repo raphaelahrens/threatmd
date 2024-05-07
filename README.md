@@ -1,6 +1,6 @@
-threatrs is a tool to transform Markdown threats in the threatrs format to a threats.json file for pytm.
+threatmd is a tool to transform Markdown threats in the threatmd format to a threats.json file for pytm.
 
-# Running threatrs
+# Running threatmd
 
 ```shell
 threats_pytm <directory of markdown threats>
@@ -9,7 +9,7 @@ threats_pytm <directory of markdown threats>
 Prints the threats in pytms JSON format to stdout.
 
 
-# threatrs format
+# threatmd format
 
 The Markdown files for each threat needs to have a metadata field containing following attributes
 
