@@ -2,7 +2,8 @@ use std::iter::{Enumerate, Peekable};
 use std::ops::RangeInclusive;
 use thiserror;
 
-use pulldown_cmark::{CodeBlockKind, Event, HeadingLevel, MetadataBlockKind, Options, Tag, TagEnd};
+use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Tag, TagEnd};
+pub use pulldown_cmark::HeadingLevel;
 use pulldown_cmark_to_cmark::cmark;
 
 
