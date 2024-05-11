@@ -10,7 +10,7 @@ use eyre::{eyre, Result};
 
 use serde::{Deserialize, Serialize};
 
-use threatrs::{MarkdownIter, MarkdownParser};
+use threatmd::{MarkdownIter, MarkdownParser};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
