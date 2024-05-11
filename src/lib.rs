@@ -1,6 +1,5 @@
 use std::iter::{Enumerate, Peekable};
 use std::ops::RangeInclusive;
-use thiserror;
 
 pub use pulldown_cmark::HeadingLevel;
 use pulldown_cmark::{CodeBlockKind, Event, MetadataBlockKind, Options, Tag, TagEnd};
@@ -28,7 +27,7 @@ impl<'input> MarkdownParser<'input> {
 
     pub fn to_string(&self, range: Option<RangeInclusive<usize>>) -> String {
         range.map_or_else(
-            || String::new(),
+            String::new,
             |r| {
                 let mut s = String::new();
                 cmark((self.events[r]).iter(), &mut s).unwrap();
@@ -82,7 +81,7 @@ impl<'inner> MarkdownIter<'inner> {
         }
         Ok((e, pos))
     }
-    fn take_map<'a, 'b, F, T>(&mut self, f: F) -> Result<T, Error>
+    fn take_map<F, T>(&mut self, f: F) -> Result<T, Error>
     where
         F: Fn(&Event) -> Option<T>,
     {
@@ -93,12 +92,12 @@ impl<'inner> MarkdownIter<'inner> {
         match f(e) {
             Some(value) => Ok(value),
             None => {
-                return Err(Error::Expected(format!("{:?}", e)));
+                Err(Error::Expected(format!("{:?}", e)))
             }
         }
     }
 
-    fn take_text<'a, 'b>(&mut self) -> Result<String, Error> {
+    fn take_text(&mut self) -> Result<String, Error> {
         let metadata = self.take_map(|e| match e {
             Event::Text(text) => Some(text.to_string()),
             _ => None,
@@ -213,11 +212,7 @@ impl<'inner> MarkdownIter<'inner> {
     }
     pub fn code_block(&mut self) -> Result<RangeInclusive<usize>, Error> {
         self.code_block_fn(|e| {
-            if let Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(ref _code_lang))) = e {
-                true
-            } else {
-                false
-            }
+            matches!(e, Event::Start(Tag::CodeBlock(CodeBlockKind::Fenced(ref _code_lang))))
         })
     }
     pub fn lang_block(&mut self, lang: &str) -> Result<RangeInclusive<usize>, Error> {

@@ -99,13 +99,12 @@ fn main() -> Result<()> {
         .threat_dir
         .read_dir()
         .expect("expected to the directory to be readable.")
+        .flatten()
     {
-        if let Ok(entry) = entry {
-            let entry = entry.path();
-            if Some(OsStr::new("md")) == entry.extension() {
-                let md_input = read_to_string(&entry)?;
-                threats.push(parse_md(&md_input)?);
-            }
+        let entry = entry.path();
+        if Some(OsStr::new("md")) == entry.extension() {
+            let md_input = read_to_string(&entry)?;
+            threats.push(parse_md(&md_input)?);
         }
     }
 
