@@ -1,17 +1,16 @@
 use std::ffi::OsStr;
-use std::path::PathBuf;
 use std::fs::read_to_string;
 use std::io;
+use std::path::PathBuf;
 
 use pulldown_cmark::HeadingLevel;
 
 use clap::Parser;
 use eyre::{eyre, Result};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use threatrs::{MarkdownIter, MarkdownParser};
-
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -21,7 +20,7 @@ struct Cli {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
-struct MetaField{
+struct MetaField {
     sid: String,
     severity: String,
     target: Vec<String>,
@@ -29,7 +28,7 @@ struct MetaField{
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Debug)]
-struct Threat{
+struct Threat {
     #[serde(rename = "SID")]
     sid: String,
     severity: String,
@@ -45,7 +44,7 @@ struct Threat{
     likelihood: String,
 }
 
-fn parse_md(markdown_input: &str) -> Result<Threat>{
+fn parse_md(markdown_input: &str) -> Result<Threat> {
     let p = MarkdownParser::new(markdown_input);
     let mut parser = p.iter();
 
@@ -54,7 +53,6 @@ fn parse_md(markdown_input: &str) -> Result<Threat>{
     let metadata: MetaField = serde_yaml::from_str(&metadata)?;
 
     let description = parser.heading(HeadingLevel::H1)?;
-
 
     let details = p.to_string(parser.multi(MarkdownIter::text));
 
@@ -71,7 +69,7 @@ fn parse_md(markdown_input: &str) -> Result<Threat>{
     let prerequisites = p.to_string(parser.multi(MarkdownIter::text));
     parser.named_heading(HeadingLevel::H2, "References")?;
     let refernces = parser.item_list()?;
-    Ok(Threat{
+    Ok(Threat {
         sid: metadata.sid,
         severity: metadata.severity,
         target: metadata.target,
@@ -86,7 +84,7 @@ fn parse_md(markdown_input: &str) -> Result<Threat>{
     })
 }
 
-fn main() -> Result<()>{
+fn main() -> Result<()> {
     let cli = Cli::parse();
 
     let mut threats = vec![];
@@ -97,7 +95,11 @@ fn main() -> Result<()>{
         return Err(eyre!("The given path was not a directory"));
     }
 
-    for entry in cli.threat_dir.read_dir().expect("expected to the directory to be readable."){
+    for entry in cli
+        .threat_dir
+        .read_dir()
+        .expect("expected to the directory to be readable.")
+    {
         if let Ok(entry) = entry {
             let entry = entry.path();
             if Some(OsStr::new("md")) == entry.extension() {
